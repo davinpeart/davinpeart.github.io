@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Difference scores over counts — Davin Peart</title>
+<meta name="description" content="A common behavioural measure is routinely fitted with a distribution that is wrong exactly at the tails. What the right family looks like, and what it changes.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Davin Peart">
+<meta property="og:title" content="Difference scores over counts are not Gaussian">
+<meta property="og:description" content="A common behavioural measure is routinely fitted with a distribution that is wrong exactly at the tails. What the right family looks like, and what it changes.">
+<meta property="og:url" content="https://davinpeart.github.io/count-differences.html">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="masthead">
+  <a class="name" href="./">Davin Peart</a>
+  <nav>
+    <a href="./">Work</a>
+    <a href="figures.html">Figures</a>
+    <a href="about.html">About</a>
+  </nav>
+</div>
+
+<main class="doc" id="main">
+
+  <header class="page">
+    <h1>Difference scores over counts are not Gaussian</h1>
+    <p class="lede">Entries into one chamber minus another. Responses before minus after. A measure this common should not still be modelled with a distribution that is wrong where it matters.</p>
+  </header>
+
+  <section>
+    <p class="eyebrow">The problem</p>
+    <h2>What everyone does, including me</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 200 words</span>
+      <p><em>Set up the measure concretely.</em> Name the paradigms — place conditioning, dipper entries, lever discrimination. These are counts, the difference of two counts is integer-valued and can be negative, and it is routinely handed to ANOVA or a Gaussian mixed model.</p>
+      <p><em>Say why it is wrong specifically.</em> Not "the assumptions are violated" — that is the sentence everyone writes and nobody acts on. Say what breaks: the support, the tails, what happens at small n and near zero.</p>
+      <p><em>Include yourself.</em> You published under this model. That admission is the reason a reader will trust the rest of the page.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">The family</p>
+    <h2>What the right distribution looks like</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 300 words. The technical centre of the page.</span>
+      <p><em>Cover:</em> the Panjer difference class; Skellam as Poisson minus Poisson; discrete Laplace as geometric minus geometric; negative-binomial differences with shared or free dispersion; and how they relate — discrete Laplace at β = 1, Skellam as the β → ∞ limit.</p>
+      <p><em>Then your parameterisation.</em> δ as the mean, τ as total intensity, the τ &gt; |δ| constraint, and why <code>τ = |δ| + exp(η)</code> needs a smooth surrogate for the absolute value so the gradient stays defined at δ = 0. That last detail is the one a statistician will notice.</p>
+      <p><em>Be honest about the boundary:</em> you can implement and validate these; you did not derive them. Cite the source.</p>
+    </div>
+
+    <div class="callout">
+      <p><strong>Reference:</strong> Ong, Shimizu &amp; Ng (2008) on the Panjer difference class — <em>[confirm citation]</em>.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Worked example</p>
+    <h2>Refitting published data</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — waits on the analysis. Quarto fragment goes here.</span>
+      <p><em>Structure:</em> the data and where it came from → the Stan model → the fit → posterior predictive check → the generative diagram for this model, drawn the same way as the others on this site.</p>
+      <p><em>Show the code.</em> This is the one page where live code earns its place, because reproducibility is the argument rather than an accessory to it.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">The comparison</p>
+    <h2>What changes</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 200 words. This is the payoff.</span>
+      <p><em>Gaussian against Skellam on the same data.</em> Where do the fits diverge? What does the Gaussian model claim about the tails that is not true? Does any inference actually move — a sign, an interval crossing zero, an effect that survives one and not the other?</p>
+      <p><em>If nothing moves, say so.</em> "The inference was robust and the model was still wrong" is a more interesting and more honest result than a manufactured reversal, and a reader will trust you more for reporting it.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">Tooling</p>
+    <h2>countdiff</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 150 words</span>
+      <p><em>What it is:</em> regression families for integer differences of counts as custom brms response families — Skellam, discrete Laplace, negative-binomial difference, each with zero-inflated, hurdle and zero-deflated variants.</p>
+      <p><em>State its actual condition.</em> In development, nothing validated. That sentence costs nothing and protects completely, and a reader who finds an unvalidated package behind a confident claim will discount everything else on the site.</p>
+      <p><em>Link the repo</em> once it is public.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>Davin Peart</span>
+  <span class="links">
+    <a href="https://osf.io/2td5x/">OSF</a>
+    <a href="https://orcid.org/0000-0002-8737-8967">ORCiD</a>
+    <a href="https://github.com/davinpeart">GitHub</a>
+    <a href="mailto:dpeart@uoguelph.ca">Email</a>
+  </span>
+</footer>
+
+</body>
+</html>

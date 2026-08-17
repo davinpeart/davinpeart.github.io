@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documenting a model — Davin Peart</title>
+<meta name="description" content="Specification, priors, diagnostics, per-subject fit and hypothesis test as one artifact — built for every model.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Davin Peart">
+<meta property="og:title" content="Documenting a model so someone can disagree with it">
+<meta property="og:description" content="Specification, priors, diagnostics, per-subject fit and hypothesis test as one artifact — built for every model.">
+<meta property="og:url" content="https://davinpeart.github.io/model-documentation.html">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="masthead">
+  <a class="name" href="./">Davin Peart</a>
+  <nav>
+    <a href="./">Work</a>
+    <a href="figures.html">Figures</a>
+    <a href="about.html">About</a>
+  </nav>
+</div>
+
+<main class="doc" id="main">
+
+  <header class="page">
+    <h1>Documenting a model so someone can disagree with it</h1>
+    <p class="lede">A model is not finished when it converges. Specification, priors, diagnostics, per-subject fit and the test belong in one artifact, and I build that artifact every time.</p>
+  </header>
+
+  <section>
+    <p class="eyebrow">Why draw it</p>
+    <h2>The diagram is not decoration</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 150 words</span>
+      <p><em>Claim to make:</em> you cannot produce this diagram from a <code>brm()</code> call. Drawing it requires knowing what brms generated on your behalf — the non-centred reparameterisation, the Cholesky factor, where each prior actually lands. So the diagram is evidence of comprehension rather than usage, and that distinction is invisible on a CV.</p>
+      <p><em>Also worth one sentence:</em> why you started drawing them. Was it for yourself, for a supervisor, for a reviewer?</p>
+      <p><em>Do not</em> explain what a generative model is. Assume the reader knows or will look it up.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="eyebrow">The set</p>
+    <h2>Seven models</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 120 words, then the grid</span>
+      <p><em>Claim:</em> three likelihood families and three link structures. Individually these are diagrams; as a set they describe a practice.</p>
+      <p><em>Concrete detail worth naming:</em> the priors are annotated on the arrows — <code>μ₀ = ln1000, σ = 2</code> — so the diagram carries the actual numbers rather than a schematic gesture at them.</p>
+    </div>
+
+    <figure class="plate-grid" style="margin:26px 0">
+      <div class="mount"><img src="figures/model-diagram-1.png" alt="Generative model: generalized logistic growth on three responses, multivariate negative binomial likelihood, LKJ prior on the subject correlation matrix."></div>
+      <div class="mount"><img src="figures/model-diagram-2.png" alt="Generative model: exponential decay on three responses, multivariate negative binomial likelihood."></div>
+      <div class="mount"><img src="figures/model-diagram-3.png" alt="Generative model: linear predictor for infusions by estradiol, hierarchical on session and subject, negative binomial likelihood."></div>
+      <div class="mount"><img src="figures/model-diagram-4.png" alt="Generative model: linear predictor with negative binomial likelihood."></div>
+      <div class="mount"><img src="figures/model-diagram-5.png" alt="Generative model: linear predictor with lognormal likelihood for cumulative consumption."></div>
+      <div class="mount"><img src="figures/model-diagram-6.png" alt="Generative model: cocaine by estradiol, trivariate hierarchical multivariate negative binomial."></div>
+      <div class="mount"><img src="figures/model-diagram-7.png" alt="Generative model: exponential decay with estradiol, trivariate hierarchical multivariate negative binomial."></div>
+    </figure>
+    <figcaption style="margin-top:-8px"><b>Seven generative models</b> from a single study. All drawn at the same scale — the height differences are real, and track how many hierarchical levels each model carries.</figcaption>
+  </section>
+
+  <section>
+    <p class="eyebrow">The artifact</p>
+    <h2>What a complete audit page holds</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 250 words, the longest section</span>
+      <p><em>Walk the page panel by panel.</em> Specification, prior predictive check, diagnostics, per-subject predictions, hypothesis test. For each: what it is for, and what would make you reject the model.</p>
+      <p><em>Cross-reference explicitly:</em> the specification panel at the top left is the third of the seven above. That connection is why showing both is not repetition.</p>
+      <p><em>The strongest sentence available here</em> is whatever you would say to a reviewer who asked why the supplement is this long.</p>
+    </div>
+
+    <figure>
+      <div class="mount"><img src="figures/audit-acquisition.png" alt="Composite supplement page: model specification diagram, prior predictive checks, convergence diagnostics, twenty-seven per-subject model predictions, and three Savage-Dickey hypothesis tests."></div>
+      <figcaption><b>One model, fully documented.</b> Specification (a), prior and posterior predictive checks (b–d), convergence diagnostics (e–f), per-subject predictions (g), and Savage-Dickey density ratios with Bayes factors (h).</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <p class="eyebrow">Fit</p>
+    <h2>Every subject, not the average</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 180 words</span>
+      <p><em>Claim:</em> a group mean can look like a good fit while individual animals are being badly described. Plotting every subject is the check that catches it.</p>
+      <p><em>Say what this grid actually showed you</em> — was there an animal the model handled badly? Name it. A concrete failure found this way is worth more than the principle.</p>
+      <p><em>Note</em> these are other investigators' projects that you did the analysis for, if you are comfortable saying so.</p>
+    </div>
+
+    <figure>
+      <div class="mount"><img src="figures/subject-posteriors.png" alt="Grid of approximately sixty small panels, one per animal, each showing observed points against a posterior mean curve with credible band."></div>
+      <figcaption><b>Per-subject posterior predictions.</b> Non-linear growth curves with subject effects on every latent parameter.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <p class="eyebrow">Limits</p>
+    <h2>Where this is still wrong</h2>
+
+    <div class="todo">
+      <span class="lbl">Write — about 150 words. The most valuable section on the site.</span>
+      <p><em>State it plainly:</em> roughly 0.1% divergent transitions, consistently, from weak identifiability. What causes it in this parameterisation, what you have ruled out, and what the simplification would cost you if you took it.</p>
+      <p><em>Why this matters:</em> almost nobody publishes this. A reader who knows what a divergence is will read this section and conclude you check your own diagnostics — which is the whole argument of the page, made by demonstration rather than assertion.</p>
+      <p><em>Do not hedge it into vagueness.</em> Numbers, cause, options, trade-off.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>Davin Peart</span>
+  <span class="links">
+    <a href="https://osf.io/2td5x/">OSF</a>
+    <a href="https://orcid.org/0000-0002-8737-8967">ORCiD</a>
+    <a href="https://github.com/davinpeart">GitHub</a>
+    <a href="mailto:dpeart@uoguelph.ca">Email</a>
+  </span>
+</footer>
+
+</body>
+</html>

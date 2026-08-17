@@ -1,0 +1,16 @@
+REFERENCE — the shared <head> block. Every page uses this pattern.
+Replace TITLE, DESC and PATH per page. Not served; kept for hand-editing.
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TITLE</title>
+<meta name="description" content="DESC">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Davin Peart">
+<meta property="og:title" content="TITLE">
+<meta property="og:description" content="DESC">
+<meta property="og:url" content="https://davinpeart.github.io/PATH">
+<meta property="og:image" content="https://davinpeart.github.io/assets/card.png">
+<meta name="twitter:card" content="summary_large_image">

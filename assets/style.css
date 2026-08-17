@@ -1,0 +1,249 @@
+/* ==========================================================================
+   Davin Peart — portfolio
+   Token set: two cool lightness families for data, one warm mark for chrome.
+   Cool is data. Warm is interface. Neither crosses into the other.
+   ========================================================================== */
+
+:root{
+  /* chrome — site only, never inside a plot */
+  --ground:#FCFCFD;
+  --surface:#FFFFFF;
+  --ink:#14171A;
+  --ink-2:#3B424B;
+  --muted:#6B727C;
+  --line:#E4E7EA;
+  --line-soft:#F0F2F4;
+  --mark:#A8423A;
+  --mark-soft:#F6ECEA;
+  --code-bg:#F7F8F9;
+  --plate:#FFFFFF;
+
+  /* data — reference only; figures ship with these baked in */
+  --slate-1:#EEF2F5; --slate-2:#C6D4DE; --slate-3:#94AEC0;
+  --slate-4:#5E86A0; --slate-5:#345C77; --slate-6:#1E3A4C;
+  --teal-5:#2E7068;
+  --brick-5:#A8423A;
+
+  /* type */
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+  --sans:system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+
+  /* measure */
+  --measure:66ch;
+  --doc:760px;
+  --plate-w:1080px;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1114; --surface:#16191D;
+    --ink:#E7EAEE; --ink-2:#B2B9C2; --muted:#858C96;
+    --line:#252930; --line-soft:#1D2126;
+    --mark:#E08A78; --mark-soft:#241A18;
+    --code-bg:#12151A;
+    --plate:#FFFFFF;              /* figures keep a white mount in both themes */
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1114; --surface:#16191D;
+  --ink:#E7EAEE; --ink-2:#B2B9C2; --muted:#858C96;
+  --line:#252930; --line-soft:#1D2126;
+  --mark:#E08A78; --mark-soft:#241A18;
+  --code-bg:#12151A;
+  --plate:#FFFFFF;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15.5px;
+  line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* --------------------------------------------------------- layout registers */
+
+/* document register — vignette. reading measure, code-forward. */
+.doc{max-width:var(--doc);margin:0 auto;padding:0 24px 96px}
+
+/* plate register — gallery. figures large, space around them. */
+.plates{max-width:var(--plate-w);margin:0 auto;padding:0 24px 96px}
+
+/* ------------------------------------------------------------------ masthead */
+
+.masthead{
+  max-width:var(--doc);margin:0 auto;padding:34px 24px 0;
+  display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap;
+}
+.plates .masthead,.masthead.wide{max-width:var(--plate-w)}
+.masthead .name{
+  font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink);
+  text-decoration:none;border:0;letter-spacing:.01em;
+}
+.masthead nav{display:flex;gap:19px;font-size:13.5px}
+.masthead nav a{color:var(--muted);border:0;text-decoration:none}
+.masthead nav a:hover,.masthead nav a[aria-current="page"]{color:var(--ink)}
+
+/* -------------------------------------------------------------------- header */
+
+header.page{padding:60px 0 30px;border-bottom:1px solid var(--line)}
+h1{
+  font-family:var(--serif);font-size:40px;line-height:1.12;margin:0 0 12px;
+  font-weight:600;letter-spacing:-.012em;text-wrap:balance;
+}
+.lede{font-size:17.5px;line-height:1.6;color:var(--ink-2);margin:0;max-width:62ch;text-wrap:pretty}
+
+/* --------------------------------------------------------------- typography */
+
+h2{
+  font-family:var(--serif);font-size:25px;margin:0 0 12px;font-weight:600;
+  letter-spacing:-.005em;text-wrap:balance;
+}
+h3{font-size:14px;margin:26px 0 8px;font-weight:600;letter-spacing:.02em;color:var(--ink)}
+
+p{max-width:var(--measure);margin:0 0 15px;color:var(--ink-2);text-wrap:pretty}
+p strong{color:var(--ink);font-weight:600}
+ul,ol{max-width:var(--measure);color:var(--ink-2);padding-left:20px;margin:0 0 15px}
+li{margin-bottom:9px}
+li::marker{color:var(--muted)}
+
+section{padding:38px 0;border-bottom:1px solid var(--line-soft)}
+section:last-of-type{border-bottom:0}
+
+.eyebrow{
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mark);
+  margin:0 0 9px;font-weight:700;
+}
+
+a{color:var(--mark);text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+a:focus-visible{outline:2px solid var(--mark);outline-offset:3px;border-radius:2px}
+
+code,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.9em}
+p code,li code,td code{
+  background:var(--code-bg);padding:1px 5px;border-radius:4px;border:1px solid var(--line-soft);
+}
+pre{
+  background:var(--code-bg);border:1px solid var(--line);border-radius:7px;
+  padding:15px 17px;overflow-x:auto;font-size:12.5px;line-height:1.7;
+  color:var(--ink-2);margin:15px 0;
+}
+pre code{background:none;border:0;padding:0}
+pre .c{color:var(--muted)}
+pre .s{color:var(--mark)}
+
+/* ------------------------------------------------------------------ callout */
+
+.callout{
+  border-left:3px solid var(--mark);background:var(--mark-soft);
+  padding:14px 18px;border-radius:0 6px 6px 0;margin:20px 0;
+}
+.callout p{margin:0;max-width:60ch}
+.callout p + p{margin-top:10px}
+
+/* ------------------------------------------------------------------ figures */
+
+/* inline figure — sits in the reading column */
+figure{margin:22px 0}
+figure img,figure svg{display:block;width:100%;height:auto;border-radius:6px}
+figure .mount{
+  background:var(--plate);border:1px solid var(--line);border-radius:8px;padding:16px;
+}
+figcaption{font-size:12px;line-height:1.6;color:var(--muted);margin-top:11px;max-width:var(--measure)}
+figcaption b{color:var(--ink-2);font-weight:600}
+
+/* plate — gallery register. figure is the event; nothing competes. */
+.plate{margin:0 0 64px}
+.plate .mount{
+  background:var(--plate);border:1px solid var(--line);border-radius:10px;
+  padding:28px;overflow-x:auto;
+}
+.plate img{display:block;width:100%;height:auto}
+.plate figcaption{max-width:70ch;margin-top:16px}
+.plate h2{margin-bottom:6px}
+
+/* two-up grid for smaller plates */
+.plate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px}
+
+/* --------------------------------------------------------------------- table */
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0;display:block;overflow-x:auto}
+thead,tbody,tr{width:100%}
+th{
+  text-align:left;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);font-weight:700;padding:0 14px 7px 0;border-bottom:1px solid var(--line);
+  white-space:nowrap;
+}
+td{padding:8px 14px 8px 0;border-bottom:1px solid var(--line-soft);color:var(--ink-2);vertical-align:top}
+td:first-child{color:var(--ink);font-weight:600}
+
+/* ---------------------------------------------------------------- index list */
+
+.entries{list-style:none;padding:0;margin:0;max-width:none}
+.entries li{
+  padding:20px 0;border-bottom:1px solid var(--line-soft);margin:0;
+  display:grid;grid-template-columns:1fr auto;gap:6px 24px;align-items:baseline;
+}
+.entries .t{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--ink)}
+.entries .t a{color:inherit;border:0}
+.entries .t a:hover{color:var(--mark)}
+.entries .k{
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  font-weight:600;white-space:nowrap;
+}
+.entries .d{grid-column:1 / -1;font-size:14px;color:var(--ink-2);margin:0;max-width:64ch}
+
+/* -------------------------------------------------------------------- footer */
+
+footer{
+  max-width:var(--doc);margin:0 auto;padding:34px 24px 64px;
+  border-top:1px solid var(--line);font-size:13px;color:var(--muted);
+  display:flex;gap:20px;flex-wrap:wrap;justify-content:space-between;
+}
+.plates ~ footer,footer.wide{max-width:var(--plate-w)}
+footer a{color:var(--muted)}
+footer a:hover{color:var(--ink)}
+footer .links{display:flex;gap:18px;flex-wrap:wrap}
+
+/* ------------------------------------------------------------------ a11y/mob */
+
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:12px;top:12px;background:var(--surface);color:var(--ink);
+  padding:9px 14px;border:1px solid var(--line);border-radius:6px;z-index:10}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+
+@media (max-width:640px){
+  h1{font-size:31px}
+  .lede{font-size:16.5px}
+  .doc,.plates{padding-left:16px;padding-right:16px}
+  .masthead{padding-left:16px;padding-right:16px}
+  footer{padding-left:16px;padding-right:16px}
+  .plate .mount{padding:16px}
+  .entries li{grid-template-columns:1fr}
+}
+
+/* --------------------------------------------------------------- drafting */
+/* .todo blocks mark where copy goes. delete the block once written.        */
+
+.todo{
+  border:1px dashed var(--mark);background:var(--mark-soft);border-radius:7px;
+  padding:15px 18px;margin:18px 0;
+}
+.todo .lbl{
+  font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mark);
+  font-weight:700;display:block;margin-bottom:7px;
+}
+.todo p{margin:0 0 8px;font-size:13.5px;color:var(--ink-2);max-width:64ch}
+.todo p:last-child{margin:0}
+.todo em{color:var(--ink);font-style:normal;font-weight:600}
