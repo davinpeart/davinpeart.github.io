@@ -52,7 +52,7 @@
     <div class="todo">
       <span class="lbl">Write — about 300 words. The technical centre of the page.</span>
       <p><em>Cover:</em> the Panjer difference class; Skellam as Poisson minus Poisson; discrete Laplace as geometric minus geometric; negative-binomial differences with shared or free dispersion; and how they relate — discrete Laplace at β = 1, Skellam as the β → ∞ limit.</p>
-      <p><em>Then your parameterisation.</em> δ as the mean, τ as total intensity, the τ &gt; |δ| constraint, and why <code>τ = |δ| + exp(η)</code> needs a smooth surrogate for the absolute value so the gradient stays defined at δ = 0. That last detail is the one a statistician will notice.</p>
+      <p><em>Then your parameterisation, which changed for a reason worth telling.</em> Mean μ and variance φ, with φ = √(μ² + δ²) rather than |μ| + δ &mdash; the absolute value put a gradient kink exactly where the latent means live. The squared form is smooth, needs no tuning constant because the smoothing scale <em>is</em> the estimated parameter, and it makes δ twice the geometric mean of the two Poisson rates. It also collapses the Bessel argument to a constant, taking special-function evaluations per gradient from 415 to 18.</p>
       <p><em>Be honest about the boundary:</em> you can implement and validate these; you did not derive them. Cite the source.</p>
     </div>
 
@@ -62,24 +62,32 @@
   </section>
 
   <section>
-    <p class="eyebrow">Worked example</p>
-    <h2>Refitting published data</h2>
+    <p class="eyebrow">The comparison</p>
+    <h2>Three models, one data set</h2>
 
     <div class="todo">
-      <span class="lbl">Write — waits on the analysis. Quarto fragment goes here.</span>
-      <p><em>Structure:</em> the data and where it came from → the Stan model → the fit → posterior predictive check → the generative diagram for this model, drawn the same way as the others on this site.</p>
-      <p><em>Show the code.</em> This is the one page where live code earns its place, because reproducibility is the argument rather than an accessory to it.</p>
+      <span class="lbl">Write &mdash; about 250 words</span>
+      <p><em>Claim:</em> the Gaussian and the Skellam alone cannot produce data shaped like this; the mixture can. State it flatly &mdash; all three are visible in the figure and none of it is arguable.</p>
+      <p><em>The caption has to carry one thing the plot cannot:</em> panels two and three fail in visually similar ways but for different reasons. The Normal has the wrong support and is symmetric &mdash; a structural failure, and discretising actually hides the worst of it. The Skellam has the right support and the right asymmetry but cannot carry the dispersion &mdash; it fails on shape, not on kind.</p>
+      <p><em>Method note, one sentence:</em> the Gaussian&rsquo;s integer probabilities come from a continuity correction, so all three panels are drawn on identical geometry and the comparison is exact.</p>
+      <p><em>And say what the replicates are:</em> full generative draws &mdash; the latent mean is redrawn from its distribution rather than held at its fitted value. Conditioning on fitted latents would make the check nearly unfailable.</p>
     </div>
+
+    <figure class="figure-wide">
+      <div class="mount"><img src="figures/ppc-comparison.jpg" alt="Three posterior predictive check panels sharing an axis. Left, Normal: predicted counts peak near four and badly under-predict the observed spike at zero. Centre, Skellam: same rightward shift and flattened peak. Right, Skellam-normal mixture: predicted counts track the observed bars closely across the range, with a visible shortfall at zero."></div>
+      <figcaption><b>Posterior predictive checks, identical geometry.</b> Observed counts as bars; posterior predictive medians and intervals as points. <em>[caption to finish]</em></figcaption>
+    </figure>
   </section>
 
   <section>
-    <p class="eyebrow">The comparison</p>
-    <h2>What changes</h2>
+    <p class="eyebrow">Limits</p>
+    <h2>Where it is still wrong</h2>
 
     <div class="todo">
-      <span class="lbl">Write — about 200 words. This is the payoff.</span>
-      <p><em>Gaussian against Skellam on the same data.</em> Where do the fits diverge? What does the Gaussian model claim about the tails that is not true? Does any inference actually move — a sign, an interval crossing zero, an effect that survives one and not the other?</p>
-      <p><em>If nothing moves, say so.</em> "The inference was robust and the model was still wrong" is a more interesting and more honest result than a manufactured reversal, and a reader will trust you more for reporting it.</p>
+      <span class="lbl">Write &mdash; about 150 words. Second-highest-value paragraph on the site.</span>
+      <p><em>The numbers are settled:</em> 69 observations sit at a difference of zero, 16.6% of 415. <strong>58 of those &mdash; 84% &mdash; are sessions with zero entries in both windows.</strong> Of those 58, <strong>38 are at the saline dose.</strong></p>
+      <p><em>So the excess at zero is structural, not distributional.</em> It is sessions with no occasion setter present and consequently no behaviour to measure. A Skellam has no mechanism for &ldquo;the animal did not engage&rdquo; &mdash; it only knows about rates. A zero-inflated Skellam is the named extension, and <code>countdiff</code> already specifies zero-inflated, hurdle and zero-deflated variants of every family.</p>
+      <p><em>Also state here:</em> <code>adapt_delta</code>, the seed and draw count, that no formal model comparison was run and why a failed PPC is the right instrument, and that the latent mean is written centred for legibility.</p>
     </div>
   </section>
 
