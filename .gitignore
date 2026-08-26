@@ -1,6 +1,7 @@
 # whitelist: ignore everything, then re-admit only what the site serves
 *
 !.gitignore
+!README.md
 !*.html
 !assets/
 !figures/
