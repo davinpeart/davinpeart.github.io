@@ -263,3 +263,10 @@ footer .links{display:flex;gap:18px;flex-wrap:wrap}
 @media (max-width:820px){
   .figure-wide{width:calc(100vw - 32px)}
 }
+
+/* bare mounts inside a plate-grid (figure sets with no individual caption) */
+.plate-grid > .mount{
+  background:var(--plate);border:1px solid var(--line);border-radius:10px;
+  padding:20px;overflow-x:auto;
+}
+.plate-grid > .mount img{display:block;width:100%;height:auto}

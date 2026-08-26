@@ -12,6 +12,7 @@
 <meta property="og:title" content="Modelling differences between overdispersed counts">
 <meta property="og:description" content="A measure common in behavioural neuroscience, routinely handed to ANOVA. A Skellam-normal mixture in Stan instead.">
 <meta property="og:url" content="https://davinpeart.github.io/count-differences.html">
+<meta property="og:image" content="https://davinpeart.github.io/assets/card.png">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
@@ -71,9 +72,11 @@ transformed data {
   int max_Y = max(abs_Y);
 }
 
-<span class="c">// the Bessel term arrives precomputed</span>
-real skellam_lpmf(int y, real mu, real phi, real log_bessel) {
-  return -phi + (log(phi + mu) - log(phi - mu)) * y / 2 + log_bessel;
+functions {
+  <span class="c">// the Bessel term arrives precomputed</span>
+  real skellam_lpmf(int y, real mu, real phi, real log_bessel) {
+    return -phi + (log(phi + mu) - log(phi - mu)) * y / 2 + log_bessel;
+  }
 }
 
 model {
