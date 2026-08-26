@@ -60,7 +60,7 @@
 // phi is the variance, constrained above the absolute mean by construction.</span>
 phi[n] = sqrt(square(mu[n]) + square(delta));</pre>
 
-    <p>Conveniently, this parameterization permits the evaluation of the log modified Bessel function of the first kind in terms of an absolute count difference and delta. We can optimize our model to perform this expensive computation once per gradient evaluation using a cache-and-lookup approach.</p>
+    <p>Conveniently, this parameterization permits the evaluation of the log modified Bessel function of the first kind in terms of an absolute count difference and delta. We can optimize our model to perform this expensive computation once per step in the range of absolute Y using a cache-and-lookup approach, rather than once per observation &mdash; here, 18 evaluations per gradient instead of 415.</p>
 
 <pre><span class="c">// phi^2 - mu^2 = delta^2, so the Bessel argument no longer varies with the
 // observation. it depends on the data only through the order abs(y).</span>
@@ -89,7 +89,7 @@ model {
   <section>
     <p class="eyebrow">Does it work</p>
 
-    <p>We should simulate data from the posteriors from each likelihood to see if our prediction that the Skellam-normal mixture is a superior description of the data-generating process. We draw from both the latent normal and the Skellam distribution to produce replicates of the sample. In the case of the Gaussian model, these draws are discretized to permit a coherent comparison to the Skellam and Skellam-normal draws.</p>
+    <p>We should simulate data from the posteriors from each likelihood to see if our prediction that the Skellam-normal mixture is a superior description of the data-generating process is correct. We draw from both the latent normal and the Skellam distribution to produce replicates of the sample. In the case of the Gaussian model, these draws are discretized by continuity correction to permit a coherent comparison to the Skellam and Skellam-normal draws.</p>
 
 <pre>generated quantities {
   array[N] real mu_rep;
@@ -104,7 +104,7 @@ model {
       <div class="mount"><img src="figures/ppc-comparison.jpg" alt="Three posterior predictive check panels sharing an axis. Left, Normal: predicted counts peak near four and badly under-predict the observed spike at zero. Centre, Skellam: same rightward shift and flattened peak. Right, Skellam-normal mixture: predicted counts track the observed bars closely across the range, with a visible shortfall at zero."></div>
     </figure>
 
-    <p>As predicted, the Gaussian and Skellam likelihood functions are unable to capture the skew and dispersion of the response variable, but the Skellam-normal mixture handles these characteristics reasonably well.</p>
+    <p>As predicted, the Gaussian likelihood function is unable to capture the skew or the discreteness of the response variable, and the Skellam &mdash; which has both &mdash; is unable to capture its dispersion. The Skellam-normal mixture handles these characteristics reasonably well.</p>
   </section>
 
   <section>

@@ -4,7 +4,7 @@
 }
 {\*\expandedcolortbl;;\cssrgb\c7843\c9020\c10196;\cssrgb\c23137\c25882\c29412;\cssrgb\c96863\c97255\c97647;
 }
-\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\margl1440\margr1440\vieww14080\viewh12660\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf0 Davin Peart\
@@ -44,4 +44,6 @@ We should simulate data from the posteriors from each likelihood to see if our p
 As predicted, the Gaussian and Skellam likelihood functions are unable to capture the skew and dispersion of the response variable, but the skellam-normal mixture handles these characteristics reasonably well.\
 11. Box 6, limits:\
 One area where even the skellam-normal struggles is predicting zeros in the response. But it seems that the abundance of zeros in the response variable are structural: 16% of differenced counts are zero, and 84% of zeros are pairs of null counts. And 65% of those occur on when animals should not be expecting to receive a reward! We can easily extend the current specification to handle these zeros with zero inflation and we might even do well to include a linear predictor of drug dose on the parameter holding the proportion of zeros drawn.\
-It should also be noted here that at the default sampler settings, 1-3 divergences occurred, and these divergences could not be resolved using alternative parameterizations, included non-centred parameterization of the latent normal. Adjusting adapt_delta from .8 to .9 removed these divergences across several runs on alternate seeds.}
+It should also be noted here that at the default sampler settings, 1-3 divergences occurred, and these divergences could not be resolved using alternative parameterizations, included non-centred parameterization of the latent normal. Adjusting adapt_delta from .8 to .9 removed these divergences across several runs on alternate seeds.\
+\
+}
