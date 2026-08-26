@@ -18,8 +18,12 @@ and none is needed.
 | `cv.html` | Full CV |
 | `404.html` | Custom not-found page |
 | `assets/style.css` | Every design token and rule, one file |
-| `figures/` | Images served by the pages |
-| `figures/originals/` | Pre-recolour source images, kept for reference |
+| `figures/` | Images served by the pages — 15 files. Others exist locally but are not tracked (see below) |
+
+A clone does **not** get everything in the working tree. `figures/originals/`
+(pre-recolour sources) and roughly sixteen rendered figures held for a later
+release are deliberately untracked. If you are working on the design and need a
+source image, ask rather than assuming it is missing by accident.
 
 ## The `.gitignore` is a whitelist — read this before adding a file
 
