@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Modelling differences between overdispersed counts — Davin Peart</title>
+<title>Modelling overdispersed count differences — Davin Peart</title>
 <meta name="description" content="A measure common in behavioural neuroscience, routinely handed to ANOVA. A Skellam-normal mixture in Stan instead.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Davin Peart">
-<meta property="og:title" content="Modelling differences between overdispersed counts">
+<meta property="og:title" content="Modelling overdispersed count differences">
 <meta property="og:description" content="A measure common in behavioural neuroscience, routinely handed to ANOVA. A Skellam-normal mixture in Stan instead.">
 <meta property="og:url" content="https://davinpeart.github.io/count-differences.html">
 <meta property="og:image" content="https://davinpeart.github.io/assets/card.png">
@@ -30,7 +30,7 @@
 <main class="doc" id="main">
 
   <header class="page">
-    <h1>Modelling differences between overdispersed counts</h1>
+    <h1>Modelling overdispersed count differences</h1>
   </header>
 
   <section>
@@ -91,7 +91,7 @@ model {
   </section>
 
   <section>
-    <p class="eyebrow">Does it work</p>
+    <p class="eyebrow">Does it work?</p>
 
     <p>We should simulate data from the posteriors from each likelihood to see if our prediction that the Skellam-normal mixture is a superior description of the data-generating process is correct. We draw from both the latent normal and the Skellam distribution to produce replicates of the sample. In the case of the Gaussian model, these draws are discretized by continuity correction to permit a coherent comparison to the Skellam and Skellam-normal draws.</p>
 
@@ -112,7 +112,7 @@ model {
   </section>
 
   <section>
-    <p class="eyebrow">Limits</p>
+    <p class="eyebrow">Limitations</p>
 
     <p>One area where even the Skellam-normal struggles is predicting zeros in the response. But it seems that the abundance of zeros in the response variable are structural: 17% of differenced counts are zero, and 87% of zeros are pairs of null counts. And 66% of those occur when animals should not be expecting to receive a reward! We can easily extend the current specification to handle these zeros with zero inflation, and we might even do well to include a linear predictor of drug dose on the parameter holding the proportion of zeros drawn.</p>
 
