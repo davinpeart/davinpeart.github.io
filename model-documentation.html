@@ -33,17 +33,11 @@
   </header>
 
   <section>
-    <p class="eyebrow">The set</p>
-    <h2>Seven models</h2>
+    <p class="eyebrow">Describing a model</p>
 
-    <div class="todo">
-      <span class="lbl">Write &mdash; about 80 words</span>
-      <p><em>Do not argue for the practice.</em> Anyone who can evaluate this page already knows what a generative diagram is and why you draw one. Explaining it spends words on a reader who was never going to be persuaded, and mildly patronises the one who was.</p>
-      <p><em>Say the one thing that is not obvious:</em> you cannot produce this diagram from a <code>brm()</code> call. Drawing it requires knowing what brms generated on your behalf &mdash; the non-centred reparameterisation, the Cholesky factor, where each prior actually lands. That is a claim about comprehension rather than usage, and it is yours.</p>
-      <p><em>Then the range:</em> three likelihood families, three link structures, priors annotated on the arrows with real numbers. Let the grid do the rest.</p>
-    </div>
+    <p>It can be difficult to adequately describe generative models in methods sections with many complex analyses and strict word limits. An effective method of clarifying the structure of these models is visualization (Kruschke, 2015). Each figure visually and compactly communicates the likelihood function selected and its parameters, the regression functions placed on each of these parameters, the random effects parameterization selected, and the priors placed on all parameters. All seven below are drawn at the same scale, so differences in height track how many hierarchical levels each model carries.</p>
 
-    <figure class="plate-grid" style="margin:26px 0">
+    <div class="plate-grid" style="margin:26px 0">
       <div class="mount"><img src="figures/model-diagram-1.png" alt="Generative model: generalized logistic growth on three responses, multivariate negative binomial likelihood, LKJ prior on the subject correlation matrix."></div>
       <div class="mount"><img loading="lazy" src="figures/model-diagram-2.png" alt="Generative model: exponential decay on three responses, multivariate negative binomial likelihood."></div>
       <div class="mount"><img loading="lazy" src="figures/model-diagram-3.png" alt="Generative model: linear predictor for infusions by estradiol, hierarchical on session and subject, negative binomial likelihood."></div>
@@ -51,57 +45,28 @@
       <div class="mount"><img loading="lazy" src="figures/model-diagram-5.png" alt="Generative model: linear predictor with lognormal likelihood for cumulative consumption."></div>
       <div class="mount"><img loading="lazy" src="figures/model-diagram-6.png" alt="Generative model: cocaine by estradiol, trivariate hierarchical multivariate negative binomial."></div>
       <div class="mount"><img loading="lazy" src="figures/model-diagram-7.png" alt="Generative model: exponential decay with estradiol, trivariate hierarchical multivariate negative binomial."></div>
-    </figure>
-    <figcaption style="margin-top:-8px"><b>Seven generative models</b> from a single study. All drawn at the same scale — the height differences are real, and track how many hierarchical levels each model carries.</figcaption>
+    </div>
   </section>
 
   <section>
-    <p class="eyebrow">The artifact</p>
-    <h2>What a complete audit page holds</h2>
+    <p class="eyebrow">Auditing a model</p>
 
-    <div class="todo">
-      <span class="lbl">Write &mdash; about 80 words</span>
-      <p><em>Name what is on the page, briefly &mdash; the panels are labelled in the figure and do not need narrating.</em> Specification, prior predictive, diagnostics, per-subject predictions, hypothesis test. One page per model, seven of them.</p>
-      <p><em>Then the one thing that is not standard.</em> Most supplements skip the prior predictive check entirely, and most report a summary fit rather than every subject. Say which of these you would drop last and why.</p>
-      <p><em>Cross-reference:</em> the specification panel at the top left is the third of the seven above.</p>
-    </div>
+    <p>In addition to describing the generative structures of the specified models, an audit of the reliability of the model predictions should be provided (Kruschke, 2021). We can show that the selected priors cover most of the range of plausible parameter values and that the data generating process was adequately described using predictive checks. We can also show that our MCMC chains converged with R&#770; and effective sample size histograms. Additionally, sometimes when the population predictions look reasonable, the model might fail catastrophically on some individual subjects &mdash; we can show subject-level posteriors to rule this error out. Finally, we can illustrate hypothesis testing of our model parameters in Savage-Dickey Bayes factor plots.</p>
 
     <figure>
-      <div class="mount"><img loading="lazy" src="figures/audit-acquisition.png" alt="Composite supplement page: model specification diagram, prior predictive checks, convergence diagnostics, twenty-seven per-subject model predictions, and three Savage-Dickey hypothesis tests."></div>
-      <figcaption><b>One model, fully documented.</b> Specification (a), prior and posterior predictive checks (b–d), convergence diagnostics (e–f), per-subject predictions (g), and Savage-Dickey density ratios with Bayes factors (h).</figcaption>
+      <div class="mount"><img loading="lazy" src="figures/audit-acquisition.png" alt="Composite supplement page: model specification diagram, prior predictive check, posterior predictive checks, convergence diagnostics, twenty-seven per-subject model predictions, and three Savage-Dickey hypothesis tests."></div>
     </figure>
+
+    <div class="callout">
+      <p>Kruschke, J. K. (2015). <em>Doing Bayesian Data Analysis: A Tutorial with R, JAGS, and Stan</em> (2nd ed.). Academic Press.</p>
+      <p>Kruschke, J. K. (2021). Bayesian analysis reporting guidelines. <em>Nature Human Behaviour</em>, 5(10), 1282&ndash;1291.</p>
+    </div>
   </section>
 
   <section>
-    <p class="eyebrow">Fit</p>
-    <h2>Every subject, not the average</h2>
+    <p class="eyebrow">Limitations</p>
 
-    <div class="todo">
-      <span class="lbl">Write — about 120 words</span>
-      <p><em>Claim:</em> a group mean can look like a good fit while individual animals are being badly described. Plotting every subject is the check that catches it.</p>
-      <p><em>Say what this grid actually showed you</em> — was there an animal the model handled badly? Name it. A concrete failure found this way is worth more than the principle.</p>
-      <p><em>Note</em> these are other investigators' projects that you did the analysis for, if you are comfortable saying so.</p>
-    </div>
-
-    <figure>
-      <div class="mount"><img loading="lazy" src="figures/subject-posteriors.png" alt="Grid of approximately sixty small panels, one per animal, each showing observed points against a posterior mean curve with credible band."></div>
-      <figcaption><b>Per-subject posterior predictions.</b> Non-linear growth curves with subject effects on every latent parameter.</figcaption>
-    </figure>
-  </section>
-
-  <section>
-    <p class="eyebrow">Limits</p>
-    <h2>What even this does not show</h2>
-
-    <div class="todo">
-      <span class="lbl">Write &mdash; about 120 words. The most valuable section on the site.</span>
-      <p><em>The move:</em> that audit page is about as thorough as supplements get, and it still has gaps. Naming them is the point of the section &mdash; it is what separates a thorough supplement from a considered one.</p>
-      <p><em>Three concrete gaps, all visible by their absence in the figure above:</em></p>
-      <p>&middot; <strong>Divergences are not plotted.</strong> Panels e and f are R&#770; and effective sample size; neither reports divergent transitions, and these models had some &mdash; consistently around 0.1%, from weak identifiability. A reader looking at those panels would not know.</p>
-      <p>&middot; <strong>No out-of-sample check.</strong> Every panel assesses fit to the data the model was given.</p>
-      <p>&middot; <strong>No comparison against an alternative.</strong> The audit shows this model is internally sound, not that it is the right one.</p>
-      <p><em>Do not hedge into vagueness.</em> Numbers where you have them, and say what you would trade to fix each.</p>
-    </div>
+    <p>Although thorough, these plots still do not convey some important information for establishing model trustworthiness. First, the model specified with two non-linear negative binomial models consistently outputs approximately 0.1% divergent transitions owing to weak random effect identifiability. The non-linear function and/or random effects structure should be simplified to remove these divergences. Additionally, these models are shown to be internally reliable, but these figures do not demonstrate that each model&rsquo;s predictions are accurate for new unfitted observations. Similarly, although reliable, these models are not necessarily the best models, as no model comparisons are demonstrated in these figures.</p>
   </section>
 
 </main>
