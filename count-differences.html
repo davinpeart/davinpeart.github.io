@@ -59,6 +59,30 @@
     <div class="callout">
       <p><strong>Reference:</strong> Ong, Shimizu &amp; Ng (2008) on the Panjer difference class — <em>[confirm citation]</em>.</p>
     </div>
+
+    <h3>The likelihood</h3>
+<pre><span class="c">// mean and variance parameterisation; phi is the variance</span>
+real skellam_lpmf(int y, real mu, real phi) {
+  return -phi
+       + (log(phi + mu) - log(phi - mu)) * y / 2
+       + log_modified_bessel_first_kind(abs(y), sqrt((phi - mu) * (phi + mu)));
+}
+
+<span class="c">// the variance function. was abs(mu) + delta, which kinks at zero.</span>
+phi[n] = sqrt(square(mu[n]) + square(delta));</pre>
+
+    <h3>What the reparameterisation bought</h3>
+<pre><span class="c">// phi^2 - mu^2 = delta^2, so the Bessel argument no longer varies with n.</span>
+<span class="c">// it depends on the observation only through the order abs(y), which is data.</span>
+transformed data {
+  array[N] int abs_Y;
+  for (n in 1:N) abs_Y[n] = abs(Y[n]);
+  int max_Y = max(abs_Y);
+}
+model {
+  vector[max_Y + 1] log_I;                       <span class="c">// once per gradient, not per observation</span>
+  for (i in 0:max_Y) log_I[i + 1] = log_modified_bessel_first_kind(i, delta);
+}</pre>
   </section>
 
   <section>
@@ -72,6 +96,17 @@
       <p><em>Method note, one sentence:</em> the Gaussian&rsquo;s integer probabilities come from a continuity correction, so all three panels are drawn on identical geometry and the comparison is exact.</p>
       <p><em>And say what the replicates are:</em> full generative draws &mdash; the latent mean is redrawn from its distribution rather than held at its fitted value. Conditioning on fitted latents would make the check nearly unfailable.</p>
     </div>
+
+    <h3>How the replicates are drawn</h3>
+<pre>generated quantities {
+  array[N] real mu_rep;
+  array[N] int  y_rep;
+  for (n in 1:N) {
+    <span class="c">// redraw the latent mean rather than holding it at its fitted value</span>
+    mu_rep[n] = normal_rng(theta[n], sigma_N);
+    y_rep[n]  = skellam_rng(mu_rep[n], sqrt(square(mu_rep[n]) + square(delta)));
+  }
+}</pre>
 
     <figure class="figure-wide">
       <div class="mount"><img src="figures/ppc-comparison.jpg" alt="Three posterior predictive check panels sharing an axis. Left, Normal: predicted counts peak near four and badly under-predict the observed spike at zero. Centre, Skellam: same rightward shift and flattened peak. Right, Skellam-normal mixture: predicted counts track the observed bars closely across the range, with a visible shortfall at zero."></div>
@@ -100,6 +135,7 @@
       <p><em>What it is:</em> regression families for integer differences of counts as custom brms response families — Skellam, discrete Laplace, negative-binomial difference, each with zero-inflated, hurdle and zero-deflated variants.</p>
       <p><em>State its actual condition.</em> In development, nothing validated. That sentence costs nothing and protects completely, and a reader who finds an unvalidated package behind a confident claim will discount everything else on the site.</p>
       <p><em>Link the repo</em> once it is public.</p>
+      <p><em>And link the full model</em> &mdash; the fragments above are excerpts; the complete Stan file, the Gaussian and Skellam comparisons and the figure code belong on OSF with a link from here.</p>
     </div>
   </section>
 
