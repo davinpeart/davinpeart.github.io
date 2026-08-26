@@ -62,7 +62,7 @@
 // phi is the variance, constrained above the absolute mean by construction.</span>
 phi[n] = sqrt(square(mu[n]) + square(delta));</pre>
 
-    <p>Conveniently, this parameterization permits the evaluation of the log modified Bessel function of the first kind in terms of an absolute count difference and delta. We can optimize our model to perform this expensive computation once per step in the range of absolute Y using a cache-and-lookup approach, rather than once per observation &mdash; here, 18 evaluations per gradient instead of 415.</p>
+    <p>Conveniently, this parameterization permits the evaluation of the log modified Bessel function of the first kind in terms of an absolute count difference and delta. We can optimize our model to perform this expensive computation once per step in the range of absolute Y using a cache-and-lookup approach, rather than once per observation &mdash; here, 18 evaluations per gradient instead of 397.</p>
 
 <pre><span class="c">// phi^2 - mu^2 = delta^2, so the Bessel argument no longer varies with the
 // observation. it depends on the data only through the order abs(y).</span>
@@ -114,7 +114,7 @@ model {
   <section>
     <p class="eyebrow">Limits</p>
 
-    <p>One area where even the Skellam-normal struggles is predicting zeros in the response. But it seems that the abundance of zeros in the response variable are structural: 16% of differenced counts are zero, and 84% of zeros are pairs of null counts. And 65% of those occur when animals should not be expecting to receive a reward! We can easily extend the current specification to handle these zeros with zero inflation, and we might even do well to include a linear predictor of drug dose on the parameter holding the proportion of zeros drawn.</p>
+    <p>One area where even the Skellam-normal struggles is predicting zeros in the response. But it seems that the abundance of zeros in the response variable are structural: 17% of differenced counts are zero, and 87% of zeros are pairs of null counts. And 66% of those occur when animals should not be expecting to receive a reward! We can easily extend the current specification to handle these zeros with zero inflation, and we might even do well to include a linear predictor of drug dose on the parameter holding the proportion of zeros drawn.</p>
 
     <p>It should also be noted here that at the default sampler settings, 1&ndash;3 divergences occurred, and these divergences could not be resolved using alternative parameterizations, including non-centred parameterization of the latent normal. Adjusting <code>adapt_delta</code> from .8 to .9 removed these divergences across several runs on alternate seeds.</p>
   </section>
