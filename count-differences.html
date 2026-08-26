@@ -4,13 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modelling overdispersed count differences — Davin Peart</title>
-<meta name="description" content="A measure common in behavioural neuroscience, routinely handed to ANOVA. A Skellam-normal mixture in Stan instead.">
+<meta name="description" content="A short case study applying a Skellam-normal mixture to my published data.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Davin Peart">
 <meta property="og:title" content="Modelling overdispersed count differences">
-<meta property="og:description" content="A measure common in behavioural neuroscience, routinely handed to ANOVA. A Skellam-normal mixture in Stan instead.">
+<meta property="og:description" content="A short case study applying a Skellam-normal mixture to my published data.">
 <meta property="og:url" content="https://davinpeart.github.io/count-differences.html">
 <meta property="og:image" content="https://davinpeart.github.io/assets/card.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -117,6 +117,11 @@ model {
     <p>One area where even the Skellam-normal struggles is predicting zeros in the response. But it seems that the abundance of zeros in the response variable are structural: 17% of differenced counts are zero, and 87% of zeros are pairs of null counts. And 66% of those occur when animals should not be expecting to receive a reward! We can easily extend the current specification to handle these zeros with zero inflation, and we might even do well to include a linear predictor of drug dose on the parameter holding the proportion of zeros drawn.</p>
 
     <p>It should also be noted here that at the default sampler settings, 1&ndash;3 divergences occurred, and these divergences could not be resolved using alternative parameterizations, including non-centred parameterization of the latent normal. Adjusting <code>adapt_delta</code> from .8 to .9 removed these divergences across several runs on alternate seeds.</p>
+  </section>
+
+  <section>
+    <p class="eyebrow">Code</p>
+    <p>Please find the full R and Stan files used for this analysis <a href="https://github.com/davinpeart/skellam-normal">on GitHub</a>.</p>
   </section>
 
 </main>
