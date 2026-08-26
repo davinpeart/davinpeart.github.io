@@ -14,8 +14,8 @@ Davin Peart
 \f0\b0 \cf3 PhD student in behavioural neuroscience at the University of Guelph. Most of what I actually do is statistical modelling.\
 2. Change 
 \f1\b \cf2 Documenting a model so someone can disagree with it 
-\f0\b0 to Model Documentation\
-3. Remove \cf3 The generative diagram is drawn by hand for every one \'97 it is the part you cannot produce from a \cf3 \cb4 brm()\cf3 \cb1  call.\
+\f0\b0 \cf2 to Model Documentation\
+3. Remove \cf3 The generative diagram is drawn by hand for every one \'97 it is the part you cannot produce from a \cb4 brm()\cb1  call.\
 4. Change Difference score over counts are not gaussian to Modelling differences between overdispersed counts\
 5. Go ahead and add whatever CV configuration you want to the CV hyperlink\
 \
@@ -26,8 +26,22 @@ Davin Peart
 3. Change the problem to modelling problem\
 4. Remove the what everyone does, including me caption and all captions like it on this page, only need one subheading each I think\
 5. Box1 text:\
-The primary measure from my publication (LINK) consisted of differenced overdispersed counts. Performance of rats on an occasion setting task was measured by subtracting the head entry count into a reward site prior to the onset of a conditioned stimulus from the count during the conditioned stimulus. I, like many other behavioural neuroscientists, used ANOVA to measure differences in this measure between selected doses of a drug occasion setter.\
+The primary measure from my publication (Peart et al. 2024) consisted of differenced overdispersed counts. Performance of rats on an occasion setting task was measured by subtracting the head entry count into a reward site prior to the onset of a conditioned stimulus from the count during the conditioned stimulus. I, like many other behavioural neuroscientists, used ANOVA to measure differences in this measure between selected doses of a drug occasion setter.\
 There is a reason ANOVA is used for this task - the resulting distribution can often be approximated by a Gaussian likelihood function and ANOVA offers reasonable resistance to error in the face of this approximation. But we can do better - ANOVA cannot describe the generation of discrete, heteroskedastic, skewed, heavy-tailed data. For this problem, we can turn to Stan.\
 6. Change the family to One solution\
 7. Box 2 text:\
-One reasonable method of approaching this problem is using the Skellam distribution - the distribution of differences between Poisson counts (cite skellam 46). Tools exist natively in Stan for implementation of the log of the special function required to evaluate this likelihood function, and it has been expressed in a mean-variance formulation that can support regression (cite koopman 2017). But the restriction of sigma squared = lambda1 + lambda2 is prohibitive of the flexibility required for our use case. Like the implementation of poisson-lognormal distribution before it (don\'92t know the original citation, please find it), we can implement the skellam-normal distribution to loosen this restriction in Stan.}
+One reasonable method of approaching this problem is using the Skellam distribution - the distribution of differences between Poisson counts (cite skellam 46). Tools exist natively in Stan for implementation of the log of the special function required to evaluate this likelihood function, and it has been expressed in a mean-variance formulation that can support regression (cite koopman 2017). But the restriction of sigma squared = lambda1 + lambda2 is prohibitive of the flexibility required for our use case. Like the implementation of poisson-lognormal distribution before it (don\'92t know the original citation, please find it), we can implement the skellam-normal distribution to loosen this restriction in Stan.\
+8. Box 3 text:\
+There is a restriction we need to handle in the mean-parameterized skellam likelihood function - the variance must be greater than the absolute value of the mean. It is tempting to simply sample our variance parameter with a lower bound of the absolute value of the sampled mean, but the Stan developers warn us that this decision creates a gradient discontinuity with potential to severely degrade sampling performance. Instead, we can sample a new parameter, delta, which we define as double the geometric mean of the two poisson rates, and transform this parameter into the appropriately constrained variance of the skellam distribution by adding its square to the squared mean and taking the square root of the sum.\
+(Put first code chunk here)\
+Conveniently, this parameterization permits the evaluation of the log modified Bessel function of the first kind in terms of an absolute count difference and delta. We can optimize our model to perform this expensive computation once per gradient evaluation using a cache-and-lookup approach.\
+(Put second chunk here, probably include the latent normal and skellam likelihood code here too)\
+9. Box 4 text:\
+We should simulate data from the posteriors from each likelihood to see if our prediction that the skellam-normal mixture is a superior description of the data-generating process. We draw from both the latent normal and the skellam distribution to produce replicates of the sample. In the case of the gaussian model, these draws are discretized to permit a coherent comparison to the skellam and skellam-normal draws.\
+(Put generated quantities chunk here)\
+(Then figure can stay here)\
+10. Box 5 text, under the PPC figure:\
+As predicted, the Gaussian and Skellam likelihood functions are unable to capture the skew and dispersion of the response variable, but the skellam-normal mixture handles these characteristics reasonably well.\
+11. Box 6, limits:\
+One area where even the skellam-normal struggles is predicting zeros in the response. But it seems that the abundance of zeros in the response variable are structural: 16% of differenced counts are zero, and 84% of zeros are pairs of null counts. And 65% of those occur on when animals should not be expecting to receive a reward! We can easily extend the current specification to handle these zeros with zero inflation and we might even do well to include a linear predictor of drug dose on the parameter holding the proportion of zeros drawn.\
+It should also be noted here that at the default sampler settings, 1-3 divergences occurred, and these divergences could not be resolved using alternative parameterizations, included non-centred parameterization of the latent normal. Adjusting adapt_delta from .8 to .9 removed these divergences across several runs on alternate seeds.}

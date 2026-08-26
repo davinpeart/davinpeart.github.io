@@ -34,76 +34,67 @@
   <section>
     <p class="eyebrow">Modelling problem</p>
 
-    <div class="todo">
-      <span class="lbl">Box 1 &mdash; drafted, paste it in</span>
-      <p>Your two paragraphs from <code>portfolio_text</code>. Add the publication link where <code>(LINK)</code> sits.</p>
-    </div>
+    <p>The primary measure from my publication <a href="#">(LINK)</a> consisted of differenced overdispersed counts. Performance of rats on an occasion setting task was measured by subtracting the head entry count into a reward site prior to the onset of a conditioned stimulus from the count during the conditioned stimulus. I, like many other behavioural neuroscientists, used ANOVA to measure differences in this measure between selected doses of a drug occasion setter.</p>
+
+    <p>There is a reason ANOVA is used for this task &mdash; the resulting distribution can often be approximated by a Gaussian likelihood function, and ANOVA offers reasonable resistance to error in the face of this approximation. But we can do better. ANOVA cannot describe the generation of discrete, heteroskedastic, skewed, heavy-tailed data. For this problem, we can turn to Stan.</p>
   </section>
 
   <section>
     <p class="eyebrow">One solution</p>
 
-    <div class="todo">
-      <span class="lbl">Box 2 &mdash; drafted, paste it in</span>
-      <p>Your paragraph from <code>portfolio_text</code>. The Poisson-lognormal citation you asked for is <strong>Bulmer, M. G. (1974). On fitting the Poisson lognormal distribution to species-abundance data. <em>Biometrics</em>, 30, 101&ndash;110.</strong></p>
-    </div>
+    <p>One reasonable method of approaching this problem is using the Skellam distribution &mdash; the distribution of differences between Poisson counts (Skellam, 1946). Tools exist natively in Stan for implementation of the log of the special function required to evaluate this likelihood function, and it has been expressed in a mean&ndash;variance formulation that can support regression (Koopman, Lit &amp; Lucas, 2017). But the restriction of &sigma;&sup2; = &lambda;<sub>1</sub> + &lambda;<sub>2</sub> is prohibitive of the flexibility required for our use case. Like the implementation of the Poisson-lognormal distribution before it (Bulmer, 1974), we can implement the Skellam-normal distribution to loosen this restriction in Stan.</p>
 
     <div class="callout">
-      <p>Skellam, J. G. (1946). The frequency distribution of the difference between two Poisson variates. <em>Journal of the Royal Statistical Society</em>, 109, 296. &nbsp;·&nbsp; Koopman, S. J. et al. (2017), mean&ndash;variance form. &nbsp;·&nbsp; Bulmer (1974), Poisson-lognormal. <em>[confirm the Koopman reference]</em></p>
+      <p>Skellam, J. G. (1946). The frequency distribution of the difference between two Poisson variates belonging to different populations. <em>Journal of the Royal Statistical Society</em>, 109, 296.</p>
+      <p>Koopman, S. J., Lit, R., &amp; Lucas, A. (2017). Intraday stochastic volatility in discrete price changes: the dynamic Skellam model. <em>Journal of the American Statistical Association</em>, 112(520), 1490&ndash;1503.</p>
+      <p>Bulmer, M. G. (1974). On fitting the Poisson lognormal distribution to species-abundance data. <em>Biometrics</em>, 30, 101&ndash;110.</p>
     </div>
   </section>
 
   <section>
     <p class="eyebrow">Implementation</p>
 
-    <div class="todo">
-      <span class="lbl">Write &mdash; about 120 words</span>
-      <p><em>This section opens where box 2 closes.</em> You have said what the model is and why; this is how it is built.</p>
-      <p><em>Two things to cover.</em> First, the variance function: <code>abs(mu) + delta</code> puts a gradient kink exactly where the latent means live, and Stan warns against non-differentiable functions in the likelihood. The squared form is smooth, needs no tuning constant because the smoothing scale <em>is</em> the estimated parameter, and it makes &delta; twice the geometric mean of the two Poisson rates.</p>
-      <p><em>Second, what that bought.</em> &phi;&sup2; &minus; &mu;&sup2; = &delta;&sup2;, so the Bessel argument stops varying with the observation &mdash; it depends on the data only through the order. 415 special-function evaluations per gradient became 18.</p>
-      <p><em>Worth one clause:</em> the latent mean is written centred because that is the model; the fitted version is the non-centred equivalent.</p>
-    </div>
+    <p>There is a restriction we need to handle in the mean-parameterized Skellam likelihood function &mdash; the variance must be greater than the absolute value of the mean. It is tempting to simply sample our variance parameter with a lower bound of the absolute value of the sampled mean, but the Stan developers warn us that this decision creates a gradient discontinuity with potential to severely degrade sampling performance. Instead, we can sample a new parameter, delta, which we define as double the geometric mean of the two Poisson rates, and transform this parameter into the appropriately constrained variance of the Skellam distribution by adding its square to the squared mean and taking the square root of the sum.</p>
 
-<pre><span class="c">// Skellam in mean-variance form. phi is the variance, and the
-// Bessel term is supplied precomputed - see below.</span>
-real skellam_lpmf(int y, real mu, real phi, real log_bessel) {
-  return -phi + (log(phi + mu) - log(phi - mu)) * y / 2 + log_bessel;
-}
-
-<span class="c">// the normal enters as a latent mean, one per observation.
-// this is what loosens sigma^2 = lambda1 + lambda2.</span>
-mu[n]  ~ normal(theta[n], sigma);
+<pre><span class="c">// delta is twice the geometric mean of the two Poisson rates.
+// phi is the variance, constrained above the absolute mean by construction.</span>
 phi[n] = sqrt(square(mu[n]) + square(delta));</pre>
 
-<pre><span class="c">// phi^2 - mu^2 = delta^2, so the Bessel argument is now constant across
-// observations. it varies only through the order abs(y), which is data.</span>
+    <p>Conveniently, this parameterization permits the evaluation of the log modified Bessel function of the first kind in terms of an absolute count difference and delta. We can optimize our model to perform this expensive computation once per gradient evaluation using a cache-and-lookup approach.</p>
+
+<pre><span class="c">// phi^2 - mu^2 = delta^2, so the Bessel argument no longer varies with the
+// observation. it depends on the data only through the order abs(y).</span>
 transformed data {
   array[N] int abs_Y;
   for (n in 1:N) abs_Y[n] = abs(Y[n]);
   int max_Y = max(abs_Y);
 }
+
+<span class="c">// the Bessel term arrives precomputed</span>
+real skellam_lpmf(int y, real mu, real phi, real log_bessel) {
+  return -phi + (log(phi + mu) - log(phi - mu)) * y / 2 + log_bessel;
+}
+
 model {
-  vector[max_Y + 1] log_I;                 <span class="c">// once per gradient, not per observation</span>
+  vector[max_Y + 1] log_I;                 <span class="c">// cached once per gradient</span>
   for (i in 0:max_Y) log_I[i + 1] = log_modified_bessel_first_kind(i, delta);
+
+  for (n in 1:N) {
+    mu[n] ~ normal(theta[n], sigma);       <span class="c">// the latent normal</span>
+    target += skellam_lpmf(Y[n] | mu[n], phi[n], log_I[abs_Y[n] + 1]);
+  }
 }</pre>
   </section>
 
   <section>
     <p class="eyebrow">Does it work</p>
 
-    <div class="todo">
-      <span class="lbl">Write &mdash; about 150 words</span>
-      <p><em>You have already predicted both failures, so this is confirmation rather than discovery.</em> Point at the prediction each model made and show what it cost.</p>
-      <p>&middot; <strong>Gaussian.</strong> You called it an approximation ANOVA is robust to. The figure is where the approximation breaks &mdash; at the mode, which is where the data are densest.</p>
-      <p>&middot; <strong>Skellam.</strong> You named &sigma;&sup2; = &lambda;&#8321; + &lambda;&#8322; as the restriction. The figure is what that restriction costs: mass it cannot concentrate. <em>This is the more interesting panel</em> &mdash; the Gaussian is what everyone uses, but the Skellam is what a careful person would reach for, and it is still not enough.</p>
-      <p><em>Two method notes, one sentence each:</em> the Gaussian&rsquo;s integer probabilities come from a continuity correction so all three panels share identical geometry; and the replicates are full generative draws, with the latent mean redrawn rather than held at its fitted value.</p>
-    </div>
+    <p>We should simulate data from the posteriors from each likelihood to see if our prediction that the Skellam-normal mixture is a superior description of the data-generating process. We draw from both the latent normal and the Skellam distribution to produce replicates of the sample. In the case of the Gaussian model, these draws are discretized to permit a coherent comparison to the Skellam and Skellam-normal draws.</p>
 
 <pre>generated quantities {
   array[N] real mu_rep;
   array[N] int  y_rep;
   for (n in 1:N) {
-    <span class="c">// redraw the latent mean rather than holding it at its fitted value</span>
     mu_rep[n] = normal_rng(theta[n], sigma);
     y_rep[n]  = skellam_rng(mu_rep[n], sqrt(square(mu_rep[n]) + square(delta)));
   }
@@ -111,30 +102,17 @@ model {
 
     <figure class="figure-wide">
       <div class="mount"><img src="figures/ppc-comparison.jpg" alt="Three posterior predictive check panels sharing an axis. Left, Normal: predicted counts peak near four and badly under-predict the observed spike at zero. Centre, Skellam: same rightward shift and flattened peak. Right, Skellam-normal mixture: predicted counts track the observed bars closely across the range, with a visible shortfall at zero."></div>
-      <figcaption><b>Posterior predictive checks, identical geometry.</b> Observed counts as bars; posterior predictive medians and intervals as points. <em>[caption to finish]</em></figcaption>
     </figure>
+
+    <p>As predicted, the Gaussian and Skellam likelihood functions are unable to capture the skew and dispersion of the response variable, but the Skellam-normal mixture handles these characteristics reasonably well.</p>
   </section>
 
   <section>
     <p class="eyebrow">Limits</p>
 
-    <div class="todo">
-      <span class="lbl">Write &mdash; about 150 words. Second-highest-value paragraph on the site.</span>
-      <p><em>The numbers are settled:</em> 69 observations sit at a difference of zero, 16.6% of 415. <strong>58 of those &mdash; 84% &mdash; are sessions with zero entries in both windows.</strong> Of those 58, <strong>38 are at the saline dose.</strong></p>
-      <p><em>So the excess at zero is structural, not distributional.</em> It is sessions with no occasion setter present and consequently no behaviour to measure. A Skellam has no mechanism for &ldquo;the animal did not engage&rdquo; &mdash; it only knows about rates. A zero-inflated Skellam is the named extension, and <code>countdiff</code> already specifies zero-inflated, hurdle and zero-deflated variants of every family.</p>
-      <p><em>Also state here:</em> <code>adapt_delta</code>, the seed and draw count, and that no formal model comparison was run &mdash; and why a failed posterior predictive check is the right instrument for the claim you are making.</p>
-    </div>
-  </section>
+    <p>One area where even the Skellam-normal struggles is predicting zeros in the response. But it seems that the abundance of zeros in the response variable are structural: 16% of differenced counts are zero, and 84% of zeros are pairs of null counts. And 65% of those occur when animals should not be expecting to receive a reward! We can easily extend the current specification to handle these zeros with zero inflation, and we might even do well to include a linear predictor of drug dose on the parameter holding the proportion of zeros drawn.</p>
 
-  <section>
-    <p class="eyebrow">Tooling</p>
-
-    <div class="todo">
-      <span class="lbl">Write &mdash; about 100 words</span>
-      <p><em>What it is:</em> regression families for integer differences of counts as custom brms response families &mdash; Skellam, discrete Laplace, negative-binomial difference, each with zero-inflated, hurdle and zero-deflated variants.</p>
-      <p><em>State its actual condition.</em> In development, nothing validated. That sentence costs nothing and protects completely.</p>
-      <p><em>Link the repo</em> once it is public &mdash; and the reproduction scripts for this page, which are going on GitHub rather than OSF.</p>
-    </div>
+    <p>It should also be noted here that at the default sampler settings, 1&ndash;3 divergences occurred, and these divergences could not be resolved using alternative parameterizations, including non-centred parameterization of the latent normal. Adjusting <code>adapt_delta</code> from .8 to .9 removed these divergences across several runs on alternate seeds.</p>
   </section>
 
 </main>
