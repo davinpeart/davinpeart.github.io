@@ -46,6 +46,19 @@
 
     <p>One reasonable method of approaching this problem is using the Skellam distribution &mdash; the distribution of differences between Poisson counts (Skellam, 1946). Tools exist natively in Stan for implementation of the log of the special function required to evaluate this likelihood function, and it has been expressed in a mean&ndash;variance formulation that can support regression (Koopman, Lit &amp; Lucas, 2017). But the restriction of &sigma;&sup2; = &lambda;<sub>1</sub> + &lambda;<sub>2</sub> is prohibitive of the flexibility required for our use case. Like the implementation of the Poisson-lognormal distribution before it (Bulmer, 1974), we can implement the Skellam-normal distribution to loosen this restriction in Stan.</p>
 
+<pre><span class="c">// the mean-variance form: mu is the mean, phi the variance. note that both
+// logarithms require phi &gt; abs(mu) &mdash; the next section is about that.
+// log_bessel arrives precomputed; see below.</span>
+functions {
+  real skellam_lpmf(int y, real mu, real phi, real log_bessel) {
+    return -phi + (log(phi + mu) - log(phi - mu)) * y / 2 + log_bessel;
+  }
+  <span class="c">// the two Poisson rates, recovered from the mean and the variance</span>
+  int skellam_rng(real mu, real phi) {
+    return poisson_rng((phi + mu) / 2) - poisson_rng((phi - mu) / 2);
+  }
+}</pre>
+
     <div class="callout">
       <p>Skellam, J. G. (1946). The frequency distribution of the difference between two Poisson variates belonging to different populations. <em>Journal of the Royal Statistical Society</em>, 109, 296.</p>
       <p>Koopman, S. J., Lit, R., &amp; Lucas, A. (2017). Intraday stochastic volatility in discrete price changes: the dynamic Skellam model. <em>Journal of the American Statistical Association</em>, 112(520), 1490&ndash;1503.</p>
@@ -58,20 +71,15 @@
 
     <p>There is a restriction we need to handle in the mean-parameterized Skellam likelihood function &mdash; the variance must be greater than the absolute value of the mean. It is tempting to simply sample our variance parameter with a lower bound of the absolute value of the sampled mean, but the <a href="https://mc-stan.org/docs/functions-reference/real-valued_basic_functions.html#step-functions">Stan developers warn us</a> that this decision creates a gradient discontinuity with potential to severely degrade sampling performance. Instead, we can sample a new parameter, delta, which we define as double the geometric mean of the two Poisson rates, and transform this parameter into the appropriately constrained variance of the Skellam distribution by adding its square to the squared mean and taking the square root of the sum.</p>
 
-<pre><span class="c">// both logarithms are undefined unless phi &gt; abs(mu). that is the restriction.
-// log_bessel arrives precomputed; see below.</span>
-functions {
-  real skellam_lpmf(int y, real mu, real phi, real log_bessel) {
-    return -phi + (log(phi + mu) - log(phi - mu)) * y / 2 + log_bessel;
-  }
-  <span class="c">// the two Poisson rates, recovered from the mean and the variance</span>
-  int skellam_rng(real mu, real phi) {
-    return poisson_rng((phi + mu) / 2) - poisson_rng((phi - mu) / 2);
-  }
-}</pre>
+<pre><span class="c">// phi is the variance, constrained above the absolute mean by construction.
+// regression coefficients and subject effects are omitted here for brevity.</span>
+parameters {
+  vector[N] mu;             <span class="c">// one latent mean per observation</span>
+  real&lt;lower=0&gt; sigma;      <span class="c">// spread of the latent normal</span>
+  real&lt;lower=0&gt; delta;      <span class="c">// twice the geometric mean of the two Poisson rates</span>
+  ...
+}
 
-<pre><span class="c">// delta is twice the geometric mean of the two Poisson rates.
-// phi is the variance, constrained above the absolute mean by construction.</span>
 transformed parameters {
   array[N] real&lt;lower=0&gt; phi;
   for (n in 1:N) phi[n] = sqrt(square(mu[n]) + square(delta));
