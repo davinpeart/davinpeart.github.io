@@ -66,17 +66,21 @@ phi[n] = sqrt(square(mu[n]) + square(delta));</pre>
 
 <pre><span class="c">// phi^2 - mu^2 = delta^2, so the Bessel argument no longer varies with the
 // observation. it depends on the data only through the order abs(y).</span>
-transformed data {
-  array[N] int abs_Y;
-  for (n in 1:N) abs_Y[n] = abs(Y[n]);
-  int max_Y = max(abs_Y);
-}
-
 functions {
   <span class="c">// the Bessel term arrives precomputed</span>
   real skellam_lpmf(int y, real mu, real phi, real log_bessel) {
     return -phi + (log(phi + mu) - log(phi - mu)) * y / 2 + log_bessel;
   }
+  <span class="c">// the two Poisson rates, recovered from the mean and the variance</span>
+  int skellam_rng(real mu, real phi) {
+    return poisson_rng((phi + mu) / 2) - poisson_rng((phi - mu) / 2);
+  }
+}
+
+transformed data {
+  array[N] int abs_Y;
+  for (n in 1:N) abs_Y[n] = abs(Y[n]);
+  int max_Y = max(abs_Y);
 }
 
 model {
